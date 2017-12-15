@@ -17,7 +17,7 @@ public class TestActivity extends Activity implements
     private Fragment currentFragment;
     private SearchServerFragment searchServerFragment;
     private DisPlayServerFragment disPlayServerFragment;
-    private long mExitTime = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +118,8 @@ public class TestActivity extends Activity implements
     private void setCurrentFragment(Fragment currentFragment) {
         this.currentFragment = currentFragment;
     }
+
+    private long mExitTime = 0;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

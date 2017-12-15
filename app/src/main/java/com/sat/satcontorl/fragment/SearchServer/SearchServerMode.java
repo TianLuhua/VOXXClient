@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -19,200 +20,207 @@ import com.sat.satcontorl.utils.LogUtils;
 
 public class SearchServerMode {
 
-	public static final String TAG = "SearchServerMode";
+    public static final String TAG = "SearchServerMode";
 
-	private static final int SCAN_IP_OVER = 2;
-	private static final int SCAN_SERVER_OUTTIME = 5000;;
-	private MulticastSocket multicastSocket;
-	private InetAddress broadcastAddress;
-	private DatagramSocket udpBack;
-	private FindDeviceRunnable fRunnable;
-	private ArrayList<DeviceInfo> deviceInfos;
-	private String serverIp;
-	private CallBack callBack;
+    private static final int SCAN_SERVER_OUTTIME = 5000;
 
-	private Handler mAsyncEventHandler = new Handler() {
+    private MulticastSocket multicastSocket;
+    private InetAddress broadcastAddress;
+    private DatagramSocket udpBack;
+    private FindDeviceRunnable fRunnable;
+    private ArrayList<DeviceInfo> deviceInfos;
+    private String serverIp;
+    private CallBack callBack;
 
-		public void handleMessage(Message msg) {
-			// TODO Auto-generated method stub
+    private Handler mAsyncEventHandler = new Handler() {
 
-			switch (msg.what) {
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
 
-			case SCAN_IP_OVER:
-				if (callBack != null) {
-					callBack.searchSuccess(deviceInfos);
-					callBack.searchEnd();
-				}
+            switch (msg.what) {
 
-				break;
+                case Setting.HandlerGlod.SCAN_IP_OVER:
+                    if (callBack != null) {
+                        callBack.searchSuccess(deviceInfos);
+                        callBack.searchEnd();
+                    }
 
-			default:
-				break;
-			}
+                    break;
+                case Setting.HandlerGlod.TIME_OUT:
+                    if (callBack != null) {
+                        callBack.searchOutTime();
+                    }
 
-		}
-	};
+                    break;
 
-	public SearchServerMode() {
+                default:
+                    break;
+            }
 
-	}
+        }
+    };
 
-	public void searchDevices(Context mContext) {
-		if (callBack != null) {
-			callBack.searchLoading();
-		}
-		deviceInfos = new ArrayList<DeviceInfo>();
-		fRunnable = new FindDeviceRunnable();
-		mAsyncEventHandler.postDelayed(fRunnable, 2000);
-		findDevice(mContext);
-		startUdpBroadcast();
-	}
+    public SearchServerMode() {
 
-	private void findDevice(Context mContext) {
-		try {
-			broadcastAddress = IpUtils.getBroadcastAddress(mContext);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			if (callBack != null) {
-				callBack.searchFila(e.getMessage());
-			}
-		}
-		IpUtils.openWifiBrocast(mContext); // for some phone can
-											// not send
-											// broadcast
-	}
+    }
 
-	private void startUdpBroadcast() {
-		new Thread() {
-			public void run() {
-				try {
-					if (multicastSocket == null) {
-						multicastSocket = new MulticastSocket(
-								Setting.PortGlob.MULTIPORT);
-						multicastSocket.joinGroup(broadcastAddress);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+    public void searchDevices(Context mContext) {
+        if (callBack != null) {
+            callBack.searchLoading();
+        }
+        deviceInfos = new ArrayList<DeviceInfo>();
+        fRunnable = new FindDeviceRunnable();
+        mAsyncEventHandler.postDelayed(fRunnable, 2000);
+        findDevice(mContext);
+        startUdpBroadcast();
+    }
 
-				}
-			}
-		}.start();
+    private void findDevice(Context mContext) {
+        try {
+            broadcastAddress = IpUtils.getBroadcastAddress(mContext);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            if (callBack != null) {
+                callBack.searchFila(e.getMessage());
+            }
+        }
+        IpUtils.openWifiBrocast(mContext); // for some phone can
+    }
 
-	}
+    private void startUdpBroadcast() {
+        new Thread() {
+            public void run() {
+                try {
+                    if (multicastSocket == null) {
+                        multicastSocket = new MulticastSocket(
+                                Setting.PortGlob.MULTIPORT);
+                        multicastSocket.joinGroup(broadcastAddress);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
 
-	private void sendBroadCast() throws IOException {
-		String ipAddress = IpUtils.getHostIP();
-		LogUtils.i(TAG, "hdb----send---ipAddress:" + ipAddress);
-		mAsyncEventHandler.postDelayed(fRunnable, 3000);
-		if (ipAddress != null) {
-			byte[] data = ("phoneip:" + ipAddress).getBytes();
-			DatagramPacket packet = new DatagramPacket(data, data.length,
-					broadcastAddress, Setting.PortGlob.MULTIPORT);
-			multicastSocket.send(packet);
-			receiverBack();
-		}
+                }
+            }
+        }.start();
 
-	}
+    }
 
-	private void receiverBack() {
-		try {
-			if (udpBack == null) {
-				udpBack = new DatagramSocket(Setting.PortGlob.BACKPORT);
-			}
-			byte[] data = new byte[50];
-			DatagramPacket pack = new DatagramPacket(data, data.length);
-			udpBack.receive(pack);
-			udpBack.setSoTimeout(SCAN_SERVER_OUTTIME);
-			String back = new String(pack.getData(), pack.getOffset(),
-					pack.getLength());
-			if (back != null && back.startsWith("serverip:")) {
-				String[] split = back.split(":");
-				serverIp = split[1];
+    private void sendBroadCast() throws IOException {
+        String ipAddress = IpUtils.getHostIP();
+        LogUtils.i(TAG, "hdb----send---ipAddress:" + ipAddress);
+        mAsyncEventHandler.postDelayed(fRunnable, 3000);
+        if (ipAddress != null) {
+            byte[] data = ("phoneip:" + ipAddress).getBytes();
+            DatagramPacket packet = new DatagramPacket(data, data.length,
+                    broadcastAddress, Setting.PortGlob.MULTIPORT);
+            multicastSocket.send(packet);
+            receiverBack();
+        }
 
-				if (!hasDeviceInfo(deviceInfos, serverIp)) {
-					LogUtils.i(TAG, "hdb-------in:");
-					DeviceInfo mDeviceInfo = new DeviceInfo(serverIp, split[2]);
-					deviceInfos.add(mDeviceInfo);
+    }
 
-					byte[] over = "over".getBytes();
-					DatagramPacket packet = new DatagramPacket(over,
-							over.length, broadcastAddress,
-							Setting.PortGlob.MULTIPORT);
-					multicastSocket.send(packet);
-					mAsyncEventHandler.sendEmptyMessageDelayed(SCAN_IP_OVER,
-							2000);
-				}
-				LogUtils.i(TAG, "hdb-------serverIp:" + serverIp
-						+ "   split[2]:" + split[2]);
+    private void receiverBack() {
+        try {
+            if (udpBack == null) {
+                udpBack = new DatagramSocket(Setting.PortGlob.BACKPORT);
+            }
+            byte[] data = new byte[50];
+            DatagramPacket pack = new DatagramPacket(data, data.length);
+            udpBack.receive(pack);
+            udpBack.setSoTimeout(SCAN_SERVER_OUTTIME);
+            String back = new String(pack.getData(), pack.getOffset(),
+                    pack.getLength());
+            if (back != null && back.startsWith("serverip:")) {
+                String[] split = back.split(":");
+                serverIp = split[1];
 
-			}
+                if (!hasDeviceInfo(deviceInfos, serverIp)) {
+                    LogUtils.i(TAG, "hdb-------in:");
+                    DeviceInfo mDeviceInfo = new DeviceInfo(serverIp, split[2]);
+                    deviceInfos.add(mDeviceInfo);
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+                    byte[] over = "over".getBytes();
+                    DatagramPacket packet = new DatagramPacket(over,
+                            over.length, broadcastAddress,
+                            Setting.PortGlob.MULTIPORT);
+                    multicastSocket.send(packet);
+                    mAsyncEventHandler.sendEmptyMessageDelayed(Setting.HandlerGlod.SCAN_IP_OVER,
+                            2000);
+                }
+                LogUtils.i(TAG, "hdb-------serverIp:" + serverIp
+                        + "   split[2]:" + split[2]);
 
-	}
+            }
 
-	private boolean hasDeviceInfo(ArrayList<DeviceInfo> Infos, String ip) {
-		for (int i = 0; i < Infos.size(); i++) {
-			if (ip != null && ip.equals(Infos.get(i).getIpAddress())) {
-				return true;
-			}
-		}
-		return false;
-	}
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            if (e instanceof SocketTimeoutException) {
+                mAsyncEventHandler.sendEmptyMessage(Setting.HandlerGlod.TIME_OUT);
+            }
+        }
 
-	private class FindDeviceRunnable implements Runnable {
+    }
 
-		@Override
-		public void run() {
-			new Thread() {
-				public void run() {
-					try {
-						sendBroadCast();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}.start();
+    private boolean hasDeviceInfo(ArrayList<DeviceInfo> Infos, String ip) {
+        for (int i = 0; i < Infos.size(); i++) {
+            if (ip != null && ip.equals(Infos.get(i).getIpAddress())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		}
+    private class FindDeviceRunnable implements Runnable {
 
-	}
+        @Override
+        public void run() {
+            new Thread() {
+                public void run() {
+                    try {
+                        sendBroadCast();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
 
-	public void setCallBack(CallBack callBack) {
-		this.callBack = callBack;
+        }
 
-	}
+    }
 
-	public static interface CallBack {
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
 
-		public void searchLoading();
+    }
 
-		public void searchSuccess(ArrayList<DeviceInfo> deviceInfos);
+    public interface CallBack {
 
-		public void searchEnd();
+        public void searchLoading();
 
-		public void searchFila(String msg);
+        public void searchSuccess(ArrayList<DeviceInfo> deviceInfos);
 
-		public void searchOutTime();
+        public void searchEnd();
 
-	}
+        public void searchFila(String msg);
 
-	public void onDestroy() {
-		this.callBack = null;
-		 if (multicastSocket != null) {
-		 try {
-		 multicastSocket.leaveGroup(broadcastAddress);
-		 } catch (IOException e) {
-		 e.printStackTrace();
-		 }
-		 multicastSocket.close();
-		 }
-		 if (udpBack != null) {
-		 udpBack.close();
-		 }
-	}
+        public void searchOutTime();
+
+    }
+
+    public void onDestroy() {
+        this.callBack = null;
+        if (multicastSocket != null) {
+            try {
+                multicastSocket.leaveGroup(broadcastAddress);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            multicastSocket.close();
+        }
+        if (udpBack != null) {
+            udpBack.close();
+        }
+    }
 
 }
