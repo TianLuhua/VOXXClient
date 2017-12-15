@@ -41,6 +41,7 @@ int string app_name 0x7f060001
 int string bt_find 0x7f060002
 int string bt_start 0x7f060003
 int string hello_world 0x7f060004
-int string tv_find 0x7f060005
+int string press_again 0x7f060005
+int string tv_find 0x7f060006
 int style AppBaseTheme 0x7f070000
 int style AppTheme 0x7f070001

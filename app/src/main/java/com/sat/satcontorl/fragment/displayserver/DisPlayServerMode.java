@@ -96,6 +96,7 @@ public class DisPlayServerMode {
 			mCodec.start();
 		} catch (Exception e) {
 			e.printStackTrace();
+			LogUtils.e(TAG, "hdb--initDecoder-ex:" + e.toString());
 		}
 	}
 

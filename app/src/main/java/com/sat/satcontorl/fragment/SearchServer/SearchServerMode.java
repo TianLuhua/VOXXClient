@@ -202,17 +202,17 @@ public class SearchServerMode {
 
 	public void onDestroy() {
 		this.callBack = null;
-		// if (multicastSocket != null) {
-		// try {
-		// multicastSocket.leaveGroup(broadcastAddress);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// multicastSocket.close();
-		// }
-		// if (udpBack != null) {
-		// udpBack.close();
-		// }
+		 if (multicastSocket != null) {
+		 try {
+		 multicastSocket.leaveGroup(broadcastAddress);
+		 } catch (IOException e) {
+		 e.printStackTrace();
+		 }
+		 multicastSocket.close();
+		 }
+		 if (udpBack != null) {
+		 udpBack.close();
+		 }
 	}
 
 }

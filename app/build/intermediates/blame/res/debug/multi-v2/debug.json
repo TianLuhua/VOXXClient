@@ -6,47 +6,42 @@
                 {
                     "source": "E:\\workspace\\androidStudio\\VOXXClient\\app\\src\\main\\res\\values\\strings.xml",
                     "from": {
-                        "startLines": "4,3,6,7,5,8",
-                        "startColumns": "4,4,4,4,4,4",
-                        "startOffsets": "109,58,217,259,163,303",
-                        "endColumns": "52,49,40,42,52,64",
-                        "endOffsets": "157,103,253,297,211,363"
+                        "startLines": "-1,-1,-1,-1,-1,8,-1",
+                        "startColumns": "-1,-1,-1,-1,-1,4,-1",
+                        "startOffsets": "-1,-1,-1,-1,-1,368,-1",
+                        "endColumns": "-1,-1,-1,-1,-1,71,-1",
+                        "endOffsets": "-1,-1,-1,-1,-1,435,-1"
                     },
                     "to": {
-                        "startLines": "13,14,15,16,17,18",
-                        "startColumns": "4,4,4,4,4,4",
-                        "startOffsets": "599,652,702,743,786,839",
-                        "endColumns": "52,49,40,42,52,64",
-                        "endOffsets": "647,697,738,781,834,899"
+                        "startLines": "13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "599,652,702,743,786,839,911",
+                        "endColumns": "52,49,40,42,52,71,64",
+                        "endOffsets": "647,697,738,781,834,906,971"
                     }
                 },
                 {
                     "source": "E:\\workspace\\androidStudio\\VOXXClient\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
-                        "startLines": "6,15",
-                        "startColumns": "4,4",
-                        "startOffsets": "191,522",
-                        "endLines": "12,17",
-                        "endColumns": "12,12",
-                        "endOffsets": "481,679"
+                        "startLines": "-1,-1",
+                        "startColumns": "-1,-1",
+                        "startOffsets": "-1,-1"
                     },
                     "to": {
-                        "startLines": "19,26",
+                        "startLines": "20,23",
                         "startColumns": "4,4",
-                        "startOffsets": "904,1195",
-                        "endLines": "25,28",
+                        "startOffsets": "976,1059",
+                        "endLines": "22,25",
                         "endColumns": "12,12",
-                        "endOffsets": "1190,1350"
+                        "endOffsets": "1054,1126"
                     }
                 },
                 {
                     "source": "E:\\workspace\\androidStudio\\VOXXClient\\app\\src\\main\\res\\values\\colors.xml",
                     "from": {
-                        "startLines": "4,6,7,9,5,8,2,3",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "159,255,301,404,208,353,57,112",
-                        "endColumns": "47,44,50,50,45,49,53,45",
-                        "endOffsets": "202,295,347,450,249,398,106,153"
+                        "startLines": "-1,-1,-1,-1,-1,-1,-1,-1",
+                        "startColumns": "-1,-1,-1,-1,-1,-1,-1,-1",
+                        "startOffsets": "-1,-1,-1,-1,-1,-1,-1,-1"
                     },
                     "to": {
                         "startLines": "5,6,7,8,9,10,11,12",
@@ -59,11 +54,9 @@
                 {
                     "source": "E:\\workspace\\androidStudio\\VOXXClient\\app\\src\\main\\res\\values\\dimens.xml",
                     "from": {
-                        "startLines": "3,4,5",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "92,151,208",
-                        "endColumns": "57,55,38",
-                        "endOffsets": "145,202,242"
+                        "startLines": "-1,-1,-1",
+                        "startColumns": "-1,-1,-1",
+                        "startOffsets": "-1,-1,-1"
                     },
                     "to": {
                         "startLines": "2,3,4",

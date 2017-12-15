@@ -16,15 +16,12 @@
     <string name="bt_find">Find</string>
     <string name="bt_start">Start</string>
     <string name="hello_world">Hello world!</string>
+    <string name="press_again">Press again to exit the program</string>
     <string name="tv_find">Looking for wireless devices</string>
     <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+        
     </style>
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        
     </style>
 </resources>
