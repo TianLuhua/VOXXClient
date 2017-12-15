@@ -113,6 +113,9 @@ public class TestActivity extends Activity implements
                             "DisPlayServerFragment").addToBackStack(null).commit();
         }
         setCurrentFragment(disPlayServerFragment);
+        if (searchServerFragment!=null){
+            searchServerFragment.onDestroy();
+        }
     }
 
     private void setCurrentFragment(Fragment currentFragment) {
