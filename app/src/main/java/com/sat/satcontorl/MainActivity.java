@@ -610,9 +610,16 @@ public class MainActivity extends Activity implements OnClickListener {
 
 			// sps:[0, 0, 0, 1, 103, 66, 64, 31, -90, -128, 64, 4, -33,
 			// -107],PPS=[0, 0, 0, 1, 104, -50, 56, -128]
-			byte[] header_sps = { 0, 0, 0, 1, 103, 66, -64, 41, -115, 104, 4,
-					0, 77, 121, 96, 30, 17, 8, -44 };
-			byte[] header_pps = { 0, 0, 0, 1, 104, -50, 1, -88, 53, -56 };
+
+			//8935
+			byte[] header_sps = { 0, 0, 0, 1, 103, 66, 64, 31, -90, -128, 64,
+			4, -33, -107 };
+			byte[] header_pps = { 0, 0, 0, 1, 104, -50, 56, -128 };
+
+//			//8985
+//			byte[] header_sps = { 0, 0, 0, 1, 103, 66, -64, 41, -115, 104, 4,
+//					0, 77, 121, 96, 30, 17, 8, -44 };
+//			byte[] header_pps = { 0, 0, 0, 1, 104, -50, 1, -88, 53, -56 };
 
 			format.setByteBuffer("csd-0", ByteBuffer.wrap(header_sps));
 			format.setByteBuffer("csd-1", ByteBuffer.wrap(header_pps));
