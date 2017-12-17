@@ -25,6 +25,7 @@ public class TestActivity extends Activity implements
         super.onCreate(savedInstanceState);
         LogUtils.v(TAG, "onCreate----");
         setContentView(R.layout.activity_test);
+        startSearchFragment();
     }
 
     @Override
@@ -32,10 +33,14 @@ public class TestActivity extends Activity implements
         // TODO Auto-generated method stub
         super.onStart();
         LogUtils.v(TAG, "onStart----");
+
+    }
+
+    private void startSearchFragment() {
         searchServerFragment = (SearchServerFragment) getFragmentManager()
                 .findFragmentByTag("SearchServerFragment");
         if (searchServerFragment != null) {
-            disPlayServerFragment.startDisPlayRomoteDesk();
+            searchServerFragment.startSearchService();
         } else {
             searchServerFragment = SearchServerFragment.getInstans();
             getFragmentManager()
@@ -44,6 +49,7 @@ public class TestActivity extends Activity implements
                             "SearchServerFragment").commit();
         }
         setCurrentFragment(searchServerFragment);
+
     }
 
     @Override
@@ -113,7 +119,7 @@ public class TestActivity extends Activity implements
                             "DisPlayServerFragment").addToBackStack(null).commit();
         }
         setCurrentFragment(disPlayServerFragment);
-        if (searchServerFragment!=null){
+        if (searchServerFragment != null) {
             searchServerFragment.onDestroy();
         }
     }
