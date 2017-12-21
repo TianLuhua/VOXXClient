@@ -1,7 +1,5 @@
 package com.sat.satcontorl.fragment.SearchServer;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,6 +20,8 @@ import com.sat.satcontorl.R;
 import com.sat.satcontorl.base.AbstractMVPFragment;
 import com.sat.satcontorl.bean.DeviceInfo;
 import com.sat.satcontorl.utils.LogUtils;
+
+import java.util.ArrayList;
 
 public class SearchServerFragment extends
         AbstractMVPFragment<SearchServerView, SearchServerPresenter> implements
@@ -111,7 +111,7 @@ public class SearchServerFragment extends
 
     public void startSearchService() {
         if (mPresenter != null) {
-            mPresenter.searchDevices(getContext().getApplicationContext());
+            mPresenter.searchDevices(getActivity().getApplicationContext());
         }
     }
 
@@ -119,8 +119,6 @@ public class SearchServerFragment extends
     public void searchLoading() {
         // TODO Auto-generated method stub
         LogUtils.e(TAG, "searchLoading");
-        Toast.makeText(SearchServerFragment.getInstans().getContext(),
-                "SearchServerFragmentSearchLoading", 1).show();
         startSearchAnimation();
     }
 
@@ -129,14 +127,14 @@ public class SearchServerFragment extends
         // TODO Auto-generated method stub
         LogUtils.e(TAG, "searchSuccess---:" + deviceInfos.toString());
         Toast.makeText(SearchServerFragment.getInstans().getContext(),
-                "searchSuccess", 1).show();
+                "searchSuccess", Toast.LENGTH_SHORT).show();
         if (searchAdapter == null) {
             searchAdapter = new DeviceAdapter(getActivity()
                     .getApplicationContext(), deviceInfos);
         }
         deviceListView.setAdapter(searchAdapter);
 
-        if (searchAdapter.getDeviceInfos() != deviceInfos) {
+        if (searchAdapter.getDeviceInfos().size() != deviceInfos.size()) {
             searchAdapter.setDeviceInfos(deviceInfos);
         }
         this.deviceInfos = deviceInfos;
@@ -153,7 +151,7 @@ public class SearchServerFragment extends
         // TODO Auto-generated method stub
         LogUtils.e(TAG, "searchFila---msg:" + msg);
         Toast.makeText(SearchServerFragment.getInstans().getContext(),
-                "searchFila:" + msg, 1).show();
+                "searchFila:" + msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -161,7 +159,7 @@ public class SearchServerFragment extends
         // TODO Auto-generated method stub
         LogUtils.e(TAG, "searchOutTime");
         Toast.makeText(SearchServerFragment.getInstans().getContext(),
-                "searchOutTime", 1).show();
+                "searchOutTime", Toast.LENGTH_SHORT).show();
 
     }
 

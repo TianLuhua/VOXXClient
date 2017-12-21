@@ -1,5 +1,16 @@
 package com.sat.satcontorl.fragment.SearchServer;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+
+import com.sat.satcontorl.Setting;
+import com.sat.satcontorl.bean.DeviceInfo;
+import com.sat.satcontorl.utils.IpUtils;
+import com.sat.satcontorl.utils.LogUtils;
+import com.sat.satcontorl.utils.ThreadUtils;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -8,15 +19,6 @@ import java.net.MulticastSocket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
-
-import com.sat.satcontorl.Setting;
-import com.sat.satcontorl.bean.DeviceInfo;
-import com.sat.satcontorl.utils.IpUtils;
-import com.sat.satcontorl.utils.LogUtils;
 
 public class SearchServerMode {
 
@@ -27,10 +29,11 @@ public class SearchServerMode {
     private MulticastSocket multicastSocket;
     private InetAddress broadcastAddress;
     private DatagramSocket udpBack;
-    private FindDeviceRunnable fRunnable;
+    //    private FindDeviceRunnable fRunnable;
     private ArrayList<DeviceInfo> deviceInfos;
     private String serverIp;
     private CallBack callBack;
+    private boolean isLoopSendBraodCast = true;
 
     private Handler mAsyncEventHandler = new Handler() {
 
@@ -53,6 +56,25 @@ public class SearchServerMode {
 
                     break;
 
+                case Setting.HandlerGlod.IS_LOOP_SENDBROADCAST:
+                    ThreadUtils.getExecutorService().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                sendBroadCast();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    if (isLoopSendBraodCast) {
+                        mAsyncEventHandler.sendEmptyMessageDelayed(Setting.HandlerGlod.IS_LOOP_SENDBROADCAST, 2000);
+                    }
+
+                    break;
+
+
                 default:
                     break;
             }
@@ -69,8 +91,9 @@ public class SearchServerMode {
             callBack.searchLoading();
         }
         deviceInfos = new ArrayList<DeviceInfo>();
-        fRunnable = new FindDeviceRunnable();
-        mAsyncEventHandler.postDelayed(fRunnable, 2000);
+//        fRunnable = new FindDeviceRunnable();
+//        mAsyncEventHandler.postDelayed(fRunnable, 2000);
+        mAsyncEventHandler.sendEmptyMessageDelayed(Setting.HandlerGlod.IS_LOOP_SENDBROADCAST, 2000);
         findDevice(mContext);
         startUdpBroadcast();
     }
@@ -108,7 +131,7 @@ public class SearchServerMode {
     private void sendBroadCast() throws IOException {
         String ipAddress = IpUtils.getHostIP();
         LogUtils.i(TAG, "hdb----send---ipAddress:" + ipAddress);
-        mAsyncEventHandler.postDelayed(fRunnable, 3000);
+//        mAsyncEventHandler.postDelayed(fRunnable, 3000);
         if (ipAddress != null) {
             byte[] data = ("phoneip:" + ipAddress).getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length,
@@ -171,23 +194,24 @@ public class SearchServerMode {
         return false;
     }
 
-    private class FindDeviceRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            new Thread() {
-                public void run() {
-                    try {
-                        sendBroadCast();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-
-        }
-
-    }
+//    public class FindDeviceRunnable implements Runnable {
+//
+//        @Override
+//        public void run() {
+//            new Thread() {
+//                public void run() {
+//                    try {
+//                        sendBroadCast();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        LogUtils.i(TAG, "sendBroadCast-----------");
+//                    }
+//                }
+//            }.start();
+//
+//        }
+//
+//    }
 
     public void setCallBack(CallBack callBack) {
         this.callBack = callBack;
@@ -221,6 +245,8 @@ public class SearchServerMode {
         if (udpBack != null) {
             udpBack.close();
         }
+        isLoopSendBraodCast = false;
+
     }
 
 }

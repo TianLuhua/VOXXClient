@@ -29,6 +29,7 @@ public class Setting {
         public static final int TIME_OUT = 4;
         public static final int CONNECT_FAIL = 5;
         public static final int START_SHOW_DATA = 6;
+        public static final int IS_LOOP_SENDBROADCAST = 7;
     }
 
     public static class MotionEventKey {

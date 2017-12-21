@@ -31,7 +31,7 @@ public class DeviceAdapter extends BaseAdapter {
 
 	public void setDeviceInfos(ArrayList<DeviceInfo> deviceInfos) {
 		this.deviceInfos = deviceInfos;
-		this.notifyDataSetChanged();
+		notifyDataSetChanged();
 	}
 
 	@Override
