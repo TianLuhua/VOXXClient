@@ -128,7 +128,7 @@ public class DisPlayServerMode {
 						int len = bufferToInt(head);
 						LogUtils.v(TAG, "hdb---read len " + len);
 
-						if (len > 0 && len < 1000000) {
+						if (len > 0 ) {
 							byte[] buf = new byte[len];
 							LogUtils.v(TAG, "hdb----read content " + buf.length);
 							dis.readFully(buf);

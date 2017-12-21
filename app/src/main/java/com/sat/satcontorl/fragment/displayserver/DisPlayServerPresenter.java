@@ -113,7 +113,7 @@ public class DisPlayServerPresenter extends
         LogUtils.i(TAG, "sendTouchData---action:" + action + "  x:" + x
                 + "  y:" + y);
 
-        newFixThreadPool(10).execute(new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 if (dos != null) {
@@ -140,6 +140,9 @@ public class DisPlayServerPresenter extends
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
+                        jObject = null;
+                        intToByte = null;
                     }
 
                 }
@@ -147,6 +150,8 @@ public class DisPlayServerPresenter extends
             }
         });
     }
+
+    private ExecutorService executorService = newFixThreadPool(10);
 
     private ExecutorService newFixThreadPool(int nThreads) {
         return new ThreadPoolExecutor(nThreads, nThreads, 0L,
